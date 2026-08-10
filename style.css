@@ -1,0 +1,32 @@
+@font-face {
+    font-family: "Deltarune";
+    src: url("./DeltaruneFont.ttf");
+}
+
+.FooterCanvas {
+    width: 100%;
+    height: 5vh;
+}
+
+.FooterOptions {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: clamp(1.25rem, 1.5rem, 1.75rem);
+    padding: 0 12.5%;
+    font-family: "Deltarune", sans-serif;
+    text-shadow: 4px 4px 0px black;
+}
+
+.FooterOptions a {
+    color: white;
+    text-decoration: none;
+}
+
+.TilingDiagonals {
+    width: 100%;
+    height: 50vh;
+}
