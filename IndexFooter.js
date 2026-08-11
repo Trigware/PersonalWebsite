@@ -8,7 +8,7 @@ const optionsShowDuration = 0.65;
 const footerLightnessMax = 50;
 const footerLightnessMin = 25;
 const progressCenter = 0.5;
-function UpdateCanvas() {
+function OnDraw() {
     let timeSinceStarted = Utils.GetTimeSinceStarted();
     let animationProgress = Math.min(timeSinceStarted / footerAnimationDuration, 1);
     let interpolatedProgress = Utils.EaseInOut(animationProgress, 3);
@@ -21,6 +21,6 @@ function UpdateCanvas() {
     canvasContext.fillStyle = footerColor;
     canvasContext.fillRect(0, 0, canvas.width, canvas.height * interpolatedProgress);
     footerOptions.style.opacity = optionsOpacity.toString();
-    requestAnimationFrame(UpdateCanvas);
+    requestAnimationFrame(OnDraw);
 }
-UpdateCanvas();
+OnDraw();

@@ -7,6 +7,9 @@ export function EaseInOut(t, power = 2) {
         return Math.pow(2 * t, power) / 2;
     return 1 - Math.pow(2 * (1 - t), power) / 2;
 }
+export function EaseIn(t, power = 2) {
+    return Math.pow(t, power);
+}
 export function Lerp(a, b, t) {
     return a + (b - a) * t;
 }
@@ -22,4 +25,7 @@ export async function GetFileContents(fileDir) {
     const response = await fetch(usedDirectory);
     let fileContents = response.text();
     return fileContents;
+}
+export function GetPercentage(value) {
+    return (value * 100).toString() + "%";
 }

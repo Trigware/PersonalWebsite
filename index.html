@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="Footer.css">
+    <link rel="stylesheet" href="TilingDiagonals.css">
     <link rel="icon" type="image/png" href="./favicon.png">
     <title>Jan Kalbáč</title>
 </head>
@@ -16,8 +17,14 @@
             <a href="#achievements">Úspěchy</a>
         </div>
     </div>
-    <canvas class="TilingDiagonals" id="TilingDiagonals"></canvas>
+    <div class="TilingDiagonals">
+        <div class="DiagonalsModulate" id="DiagonalsModulate"></div>
+        <div class="Introduction">
+            <span style="font-size: 2.5em">Ahoj, jmenuji se </span>
+            <span class="MyName"><b>JAN KALBÁČ</b>!</span>
+        </div>
+    </div>
     <script type="module" src="IndexFooter.js"></script>
-    <script type="module" src="TilingDiagonals.js"></script>
+    <script type="module" src="TiledDiagonals.js"></script>
 </body>
 </html>
