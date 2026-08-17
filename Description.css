@@ -1,5 +1,6 @@
 :root {
     --image-size: 265px;
+    --tool-box-width: 16em;
 }
 
 .Description {
@@ -25,11 +26,20 @@
     background-color: black;
     border-radius: 20px;
     box-shadow: 3px 3px 0 2px #888888;
-    opacity: 0.25;
+}
+
+.DescriptionTextbox.Tool {
+    height: calc(var(--image-size) / 2.5);
+    width: var(--tool-box-width);
 }
 
 .TextContainer {
     font-family: "Deltarune", sans-serif;
     font-size: 2.0em;
     padding: 0.7% 2%;
+}
+
+h1 {
+    font-family: "Deltarune", sans-serif;
+    justify-content: center;
 }

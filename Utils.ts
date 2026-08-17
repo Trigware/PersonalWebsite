@@ -46,3 +46,7 @@ export function GetAnimationProgress(animationDelay: number, animationDuration: 
     let animationProgress: number = Math.min(timeSinceAnimationStarted / animationDuration, 1);
     return animationProgress;
 }
+
+export function InverseLerp(a: number, b: number, v: number): number {
+    return (v - a) / b;
+}
