@@ -29,3 +29,16 @@ export async function GetFileContents(fileDir) {
 export function GetPercentage(value) {
     return (value * 100).toString() + "%";
 }
+export function Clamp(value, min, max) {
+    if (value < min)
+        return min;
+    if (value > max)
+        return max;
+    return value;
+}
+export function GetAnimationProgress(animationDelay, animationDuration) {
+    let timeSinceStarted = GetTimeSinceStarted();
+    let timeSinceAnimationStarted = Math.max(timeSinceStarted - animationDelay, 0);
+    let animationProgress = Math.min(timeSinceAnimationStarted / animationDuration, 1);
+    return animationProgress;
+}

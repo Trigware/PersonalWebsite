@@ -33,3 +33,16 @@ export async function GetFileContents(fileDir: string): Promise<string> {
 export function GetPercentage(value: number) {
     return (value * 100).toString() + "%";
 }
+
+export function Clamp(value: number, min: number, max: number): number {
+    if (value < min) return min;
+    if (value > max) return max;
+    return value;
+}
+
+export function GetAnimationProgress(animationDelay: number, animationDuration: number): number {
+    let timeSinceStarted: number = GetTimeSinceStarted();
+    let timeSinceAnimationStarted: number = Math.max(timeSinceStarted - animationDelay, 0);
+    let animationProgress: number = Math.min(timeSinceAnimationStarted / animationDuration, 1);
+    return animationProgress;
+}
