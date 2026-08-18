@@ -1,6 +1,6 @@
 :root {
     --image-size: 265px;
-    --tool-box-width: 16em;
+    --tool-box-width: 18em;
 }
 
 .Description {
@@ -29,8 +29,12 @@
 }
 
 .DescriptionTextbox.Tool {
-    height: calc(var(--image-size) / 2.5);
+    height: calc(var(--image-size) / 2.325);
     width: var(--tool-box-width);
+
+    display: flex;
+    align-items: center;
+    font-family: "Deltarune", sans-serif;
 }
 
 .TextContainer {

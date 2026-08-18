@@ -9,7 +9,7 @@ h1 {
 }
 
 .ToolsSection {
-    --tool-gap: 40px;
+    --tool-gap: 30px;
 
     display: flex;
     flex-wrap: wrap;

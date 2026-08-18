@@ -1,4 +1,24 @@
 const startPerformance = performance.now();
+export class Vec2 {
+    x = 0;
+    y = 0;
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    static Zero() {
+        return new Vec2(0, 0);
+    }
+    Plus(x, y) {
+        return new Vec2(this.x + x, this.y + y);
+    }
+    Minus(x, y) {
+        return new Vec2(this.x - x, this.y - y);
+    }
+    IsInsideOf(x, y, w, h) {
+        return this.x >= x && this.y >= y && this.x <= w && this.y <= h;
+    }
+}
 export function GetTimeSinceStarted() {
     return (performance.now() - startPerformance) / 1000.0;
 }
@@ -45,3 +65,9 @@ export function GetAnimationProgress(animationDelay, animationDuration) {
 export function InverseLerp(a, b, v) {
     return (v - a) / b;
 }
+let mousePos = Vec2.Zero();
+document.addEventListener("mousemove", (event) => {
+    mousePos.x = event.clientX;
+    mousePos.y = event.clientY;
+});
+export function GetMousePos() { return mousePos; }

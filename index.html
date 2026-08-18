@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="Footer.css">
+    <link rel="stylesheet" href="Header.css">
     <link rel="stylesheet" href="TilingDiagonals.css">
     <link rel="stylesheet" href="Description.css">
     <link rel="stylesheet" href="Tools.css">
@@ -11,42 +11,49 @@
     <title>Jan Kalbáč</title>
 </head>
 <body style="background-color:black; color:white">
-    <div style="position: relative">
-        <canvas class="FooterCanvas" id="FooterCanvas"></canvas>
-        <div class="FooterOptions" id="FooterOptions">
+    <div class="HeaderSpace"></div>
+    <div class="Header">
+        <canvas class="HeaderSpace" id="HeaderCanvas"></canvas>
+        <div class="HeaderOptions" id="HeaderOptions">
             <a href="#who">Kdo jsem?</a>
             <a href="#projects">Projekty</a>
             <a href="#achievements">Úspěchy</a>
         </div>
     </div>
-    <div class="TilingDiagonals" id="TilingDiagonals" style="height: 20vh">
-        <div class="DiagonalsModulate"></div>
-        <div class="Introduction" id="Introduction">
-            <span style="font-size: 2.5em">Ahoj, jmenuji se </span>
-            <span class="MyName"><b>JAN KALBÁČ</b>!</span>
-        </div>
-    </div>
-    <br>
-    <div class="Description">
-        <img src="MyPicture.png" class="MyImage" id="MyImage">
-        <div class="DescriptionTextbox" id="DescriptionTextbox">
-            <div class="TextContainer" id="TextContainer">
-                Jsem ambiciózní český programátor, který se specializuje na herní vývoj a design, se zkušenostmi v jazycích C#, C++ a herním enginem Godot.
-                <br><br>
-                Mimo jiné se také zúčastňuji celostátních soutěžích, ve kterých buď pracuji za sebe, nebo jako člen většího týmu.
-                <br><br>
-                Zde ukazuji své projekty a úspěchy, které by vás mohli zaujat.
+    <section id="who">
+        <div class="TilingDiagonals" id="TilingDiagonals">
+            <div class="DiagonalsModulate"></div>
+            <div class="Introduction" id="Introduction">
+                <span style="font-size: 2.5em">Ahoj, jmenuji se </span>
+                <span class="MyName"><b>JAN KALBÁČ</b>!</span>
             </div>
         </div>
-    </div>
-    <br><br>
-    <div class="ToolsRoot">
-        <div class="ScrollingTools" id="ScrollingTools"></div>
-        <h1 id="ToolsHeader">NÁSTROJE KTERÉ POUŽÍVÁM</h1>
         <br>
-        <div class="ToolsSection" id="ToolsSection"></div>
-    </div>
-    <script type="module" src="IndexFooter.js"></script>
+        <div class="Description">
+            <img src="MyPicture.png" class="MyImage" id="MyImage">
+            <div class="DescriptionTextbox" id="DescriptionTextbox">
+                <div class="TextContainer" id="TextContainer">
+                    Jsem ambiciózní český programátor, který se specializuje na herní vývoj a design, se zkušenostmi v jazycích C#, C++ a herním enginem Godot.
+                    <br><br>
+                    Mimo jiné se také zúčastňuji celostátních soutěžích, ve kterých buď pracuji za sebe, nebo jako člen většího týmu.
+                    <br><br>
+                    Zde ukazuji své projekty a úspěchy, které by vás mohli zaujat.
+                </div>
+            </div>
+        </div>
+        <br><br>
+        <div class="ToolsRoot">
+            <div class="ScrollingTools" id="ScrollingTools"></div>
+            <h1 id="ToolsHeader">NÁSTROJE KTERÉ POUŽÍVÁM</h1>
+            <br>
+            <div class="ToolsSection" id="ToolsSection"></div>
+        </div>
+        <br><br>
+    </section>
+    <section id="projects">
+        <h1>PROJEKTY</h1>
+    </section>
+    <script type="module" src="IndexHeader.js"></script>
     <script type="module" src="TiledDiagonals.js"></script>
     <script type="module" src="Typewritter.js"></script>
     <script type="module" src="Description.js"></script>
