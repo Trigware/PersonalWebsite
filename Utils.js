@@ -33,13 +33,6 @@ export function EaseIn(t, power = 2) {
 export function Lerp(a, b, t) {
     return a + (b - a) * t;
 }
-export function clamp(value, min, max) {
-    if (value < min)
-        return min;
-    if (value > max)
-        return max;
-    return value;
-}
 export async function GetFileContents(fileDir) {
     const usedDirectory = "./" + fileDir;
     const response = await fetch(usedDirectory);
@@ -48,6 +41,12 @@ export async function GetFileContents(fileDir) {
 }
 export function GetPercentage(value) {
     return (value * 100).toString() + "%";
+}
+export function GetNumericPixels(value) {
+    let suffixStartIndex = value.indexOf("px");
+    let valueWithoutSuffix = value.substring(0, suffixStartIndex);
+    let numericalValue = Number(valueWithoutSuffix);
+    return numericalValue;
 }
 export function Clamp(value, min, max) {
     if (value < min)
@@ -71,3 +70,12 @@ document.addEventListener("mousemove", (event) => {
     mousePos.y = event.clientY;
 });
 export function GetMousePos() { return mousePos; }
+export function IsMouseInBox(box, offset = Vec2.Zero()) {
+    let boxRect = box.getBoundingClientRect();
+    boxRect.x += offset.x;
+    boxRect.y += offset.y;
+    let mousePos = GetMousePos();
+    let mouseBoxOriginDiff = mousePos.Minus(boxRect.left, boxRect.top);
+    let isMouseInBox = mouseBoxOriginDiff.IsInsideOf(0, 0, boxRect.width, boxRect.height);
+    return isMouseInBox;
+}

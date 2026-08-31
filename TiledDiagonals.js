@@ -4,9 +4,9 @@ const waitDuration = 0.35;
 import * as Utils from "./Utils.js";
 const diagonalsSpeed = 125;
 const headerDiagonalsColor = "#ab6339";
-const descriptionDiagonalsColor = "#3a894e";
 function OnDraw() {
     ProgressDiagonals(tilingDiagonalsDiv, headerDiagonalsColor);
+    HandleIntroductoryTextResizing();
     requestAnimationFrame(OnDraw);
 }
 function ProgressDiagonals(tilingDiagonals, color) {
@@ -22,5 +22,13 @@ function ProgressDiagonals(tilingDiagonals, color) {
 }
 function SetProperty(element, propertyName, propertyValue) {
     element.style.setProperty(propertyName, propertyValue);
+}
+const defaultSizeIntroductionWidth = 700;
+const minimumIntroductionSize = 0.35;
+function HandleIntroductoryTextResizing() {
+    let diagonalsBoundsRect = tilingDiagonalsDiv.getBoundingClientRect();
+    let intendedScreenWidth = diagonalsBoundsRect.width;
+    let introductionSize = Utils.Clamp(intendedScreenWidth / defaultSizeIntroductionWidth, minimumIntroductionSize, 1);
+    document.documentElement.style.setProperty("--introduction-text-size", introductionSize.toString());
 }
 OnDraw();

@@ -1,10 +1,15 @@
 :root {
     --image-size: 265px;
-    --tool-box-width: 18em;
+    --tool-box-height: calc(var(--image-size) / 2.5);
+    --tool-visibility-button-size: 0.5;
+    --tool-show-button-height: calc(var(--tool-box-height) * var(--tool-visibility-button-size));
+    --description-low-x-height-multiplier: 0.85;
+    --description-break-visibility: inline
 }
 
 .Description {
     display: flex;
+    flex-direction: row;
     justify-content: center;
     gap: 50px;
 }
@@ -26,15 +31,44 @@
     background-color: black;
     border-radius: 20px;
     box-shadow: 3px 3px 0 2px #888888;
-}
-
-.DescriptionTextbox.Tool {
-    height: calc(var(--image-size) / 2.325);
-    width: var(--tool-box-width);
 
     display: flex;
     align-items: center;
     font-family: "Deltarune", sans-serif;
+}
+
+@media (max-aspect-ratio: 8 / 10) {
+    .Description {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+    .DescriptionTextbox {
+        width: 85vw;
+        height: calc(var(--image-size) * var(--description-low-x-height-multiplier));
+    }
+    :root {
+        --image-size: 200px;
+        --description-break-visibility: none;
+    }
+}
+
+.DescriptionTextbox.Tool {
+    height: var(--tool-box-height);
+    width: var(--tool-box-width);
+}
+
+.DescriptionTextbox.ToolButton {
+    height: var(--tool-show-button-height);
+    min-width: calc(var(--tool-box-width) * var(--tool-visibility-button-size));
+    width: min-content;
+    padding-inline: 20px;
+
+    justify-content: center;
+    border-radius: 14px;
+    color: white;
+    font-size: 1.07em;
+    white-space: nowrap;
 }
 
 .TextContainer {
@@ -46,4 +80,8 @@
 h1 {
     font-family: "Deltarune", sans-serif;
     justify-content: center;
+}
+
+.OptionalElement {
+    display: var(--description-break-visibility);
 }

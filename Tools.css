@@ -1,5 +1,8 @@
 :root {
-    --tool-section-columns: 3;
+    --max-tool-section-columns: 3;
+    --tool-gap: 30px;
+    --tool-box-width: 265px;
+    --colored-seperator-height: 4px;
 }
 
 h1 {
@@ -9,17 +12,16 @@ h1 {
 }
 
 .ToolsSection {
-    --tool-gap: 30px;
-
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     margin: 0 auto;
     gap: var(--tool-gap);
 
+    max-width: 100%;
     width: calc(
-        (var(--tool-section-columns) + 1) * var(--tool-box-width)
-      + (var(--tool-section-columns) - 1) * var(--tool-gap)
+        (var(--max-tool-section-columns) + 1) * var(--tool-box-width)
+      + (var(--max-tool-section-columns) - 1) * var(--tool-gap)
     );
 }
 
@@ -31,4 +33,27 @@ h1 {
     position: absolute;
     top: 0;
     left: 0;
+}
+
+.ToolButtonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(var(--tool-show-button-height) + var(--tool-gap) * 2);
+}
+
+.ToolButtonContainer.Filter {
+    height: fit-content;
+    gap: var(--tool-gap);
+    flex-wrap: wrap;
+    scale: 0.9;
+}
+
+.ToolSectionButtonSeperator {
+    height: var(--tool-gap);
+}
+
+button {
+    cursor: pointer;
 }

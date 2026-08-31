@@ -8,7 +8,7 @@ export class Vec2 {
         this.x = x; this.y = y;
     }
 
-    public static Zero(): Vec2 {
+    public static Zero() {
         return new Vec2(0, 0);
     }
 
@@ -42,12 +42,6 @@ export function Lerp(a: number, b: number, t: number): number {
     return a + (b - a) * t;
 }
 
-export function clamp(value: number, min: number, max: number): number {
-    if (value < min) return min;
-    if (value > max) return max;
-    return value;
-}
-
 export async function GetFileContents(fileDir: string): Promise<string> {
     const usedDirectory: string = "./" + fileDir;
     const response = await fetch(usedDirectory);
@@ -55,8 +49,15 @@ export async function GetFileContents(fileDir: string): Promise<string> {
     return fileContents;
 }
 
-export function GetPercentage(value: number) {
+export function GetPercentage(value: number): string {
     return (value * 100).toString() + "%";
+}
+
+export function GetNumericPixels(value: string): number {
+    let suffixStartIndex: number = value.indexOf("px");
+    let valueWithoutSuffix: string = value.substring(0, suffixStartIndex);
+    let numericalValue: number = Number(valueWithoutSuffix);
+    return numericalValue;
 }
 
 export function Clamp(value: number, min: number, max: number): number {
@@ -84,3 +85,12 @@ document.addEventListener("mousemove", (event) => {
 });
 
 export function GetMousePos(): Vec2 { return mousePos; }
+
+export function IsMouseInBox(box: HTMLElement, offset: Vec2 = Vec2.Zero()) {
+    let boxRect: DOMRect = box.getBoundingClientRect();
+    boxRect.x += offset.x; boxRect.y += offset.y;
+    let mousePos: Vec2 = GetMousePos();
+    let mouseBoxOriginDiff: Vec2 = mousePos.Minus(boxRect.left, boxRect.top);
+    let isMouseInBox: boolean = mouseBoxOriginDiff.IsInsideOf(0, 0, boxRect.width, boxRect.height);
+    return isMouseInBox;
+}

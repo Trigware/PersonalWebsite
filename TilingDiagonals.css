@@ -1,8 +1,13 @@
+:root {
+    --introduction-text-size: 1;
+    --introduction-shadow-offset: calc(var(--introduction-text-size) * 6px);
+}
+
 .TilingDiagonals {
     --diagonals-offset: 25px;
 
-    width: 100%;
-    height: 15em;
+    width: 100vw;
+    height: calc(15em * var(--section-link-size));
     position: relative;
 
     background-image: url("TiledDiagonals.png");
@@ -27,20 +32,25 @@
     mix-blend-mode: multiply;
 }
 
-.Introduction {
+.Introduction {  
     position: relative;
     inset: 0;
     z-index: 1;
-    transform: translateY(7.5%);
+
+    width: 100vw;
+    height: 100%;
     text-align: center;
+    font-size: calc(var(--introduction-text-size) * 1em);
+    line-height: 5em;
 
     font-family: "Deltarune", sans-serif;
-    text-shadow: 6px 6px 0px black;
+    text-shadow: var(--introduction-shadow-offset) var(--introduction-shadow-offset) 0px black;
+    transform: translateY(70%);
 }
 
 .MyName {
     font-size: 5em;
     text-decoration: underline;
-    text-decoration-thickness: 5px;
+    text-decoration-thickness: calc(var(--introduction-text-size) * 5px);
     text-underline-offset: 10%;
 }

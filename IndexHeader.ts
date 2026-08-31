@@ -12,6 +12,9 @@ const headerLightnessMax: number = 50;
 const headerLightnessMin: number = 25;
 const progressCenter: number = 0.5;
 
+const sectionLinkDefaultViewportWidth: number = 650;
+const minimumSectionLinkSize = 0.35;
+
 function OnDraw() {
     let timeSinceStarted: number = Utils.GetTimeSinceStarted();
     let animationProgress: number = Math.min(timeSinceStarted / headerAnimationDuration, 1);
@@ -21,8 +24,13 @@ function OnDraw() {
     let colorChangeProgress: number = sinceLastColorChangeStarted / headerColorChangeDuration;
     let usedColorChangeProgress: number = colorChangeProgress < progressCenter ? colorChangeProgress*2 : (1 - colorChangeProgress) * 2;
     let footerLightness: number = Utils.Lerp(headerLightnessMax, headerLightnessMin, usedColorChangeProgress);
-    const footerColor = `hsl(225, 50%, ${footerLightness}%)`;
-    let optionsOpacity = Utils.clamp((timeSinceStarted - headerAnimationDuration) / optionsShowDuration, 0, 1);
+    const footerColor: string = `hsl(225, 50%, ${footerLightness}%)`;
+    let optionsOpacity: number = Utils.Clamp((timeSinceStarted - headerAnimationDuration) / optionsShowDuration, 0, 1);
+
+    let comparedWidth: number = headerOptions.clientWidth;
+    let sectionLinkSize: number = comparedWidth / sectionLinkDefaultViewportWidth;
+    let sectionLinkSizeUsed: string = Utils.Clamp(sectionLinkSize, minimumSectionLinkSize, 1).toString();
+    document.documentElement.style.setProperty("--section-link-size", sectionLinkSizeUsed.toString());
 
     canvasContext.fillStyle = footerColor;
     canvasContext.fillRect(0, 0, canvas.width, canvas.height * interpolatedProgress);

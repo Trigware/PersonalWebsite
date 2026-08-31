@@ -3,28 +3,56 @@ import * as Utils from "./Utils.js";
 const toolsSectionRoot = document.getElementById("ToolsSection") as HTMLDivElement;
 const scrollingTools = document.getElementById("ScrollingTools") as HTMLDivElement;
 const toolsHeader = document.getElementById("ToolsHeader") as HTMLHeadingElement;
+const toolsCollapseButton = document.getElementById("ToolsCollapseButton") as HTMLButtonElement;
+const toolBoxFiltersRoot = document.getElementById("ToolBoxFilters") as HTMLDivElement;
+const toolsCollapseButtonContainer = document.getElementById("ToolButtonContainer") as HTMLDivElement;
+
+enum ToolType {
+    All,
+    GameDev,
+    WebDev,
+    DevTool,
+    Other,
+    ShowMore
+}
 
 class ToolInfo {
     public filePath: string = "";
     public toolName: string = "";
-    public constructor(path: string, name: string) {
+    public toolTypeList: ToolType[] = [];
+
+    public constructor(path: string, name: string, typeList: ToolType[] = []) {
         this.filePath = path;
         this.toolName = name;
+        this.toolTypeList = typeList;
     }
 }
 
 const toolInfoList: ToolInfo[] = [
-    new ToolInfo("cpp.png", "C++"), new ToolInfo("csharp.png", "CSharp"), new ToolInfo("css3.png", "CSS"),
-    new ToolInfo("git.png", "Git"), new ToolInfo("godot.png", "Godot"), new ToolInfo("html5.png", "HTML"),
-    new ToolInfo("js.png", "JavaScript"), new ToolInfo("ts.png", "TypeScript")
+    new ToolInfo("cpp.png", "C++", [ToolType.GameDev]), new ToolInfo("csharp.png", "CSharp", [ToolType.GameDev]), new ToolInfo("ts.png", "TypeScript", [ToolType.WebDev]),
+    new ToolInfo("godot.png", "Godot", [ToolType.GameDev]), new ToolInfo("css3.png", "CSS", [ToolType.WebDev]), new ToolInfo("git.png", "Git", [ToolType.DevTool]),
+    new ToolInfo("html5.png", "HTML", [ToolType.WebDev]), new ToolInfo("js.png", "JavaScript", [ToolType.WebDev]), new ToolInfo("VSCommunity.png", "VS Community", [ToolType.DevTool]),
+    new ToolInfo("sdl.png", "SDL", [ToolType.GameDev]), new ToolInfo("VSCode.png", "VSCode", [ToolType.DevTool])
 ];
+
+const toolTypeFilterNameMap = new Map<ToolType, string>([
+    [ToolType.All, "Vše"],
+    [ToolType.GameDev, "Herní vývoj"],
+    [ToolType.WebDev, "Webový vývoj"],
+    [ToolType.DevTool, "Vývojové programy"],
+    [ToolType.Other, "Jiné"]
+]);
 
 let previousHeaderWidth: number = -1;
 const toolBoxIconScale: number = 0.6;
-const scrollingToolsOpacityDelay: number = 1.6;
+const scrollingToolsOpacityDelay: number = 2;
 const scrollingToolsOpacityAnimationDuration: number = 1.1;
 
-function OnStart() {
+let areToolsCollapsed: boolean = true;
+let selectedToolTypeFilter: ToolType = ToolType.All;
+const collapsedRowCount: number = 2;
+
+function CreateToolInfoBoxes() {
     for (let i: number = 0; i < toolInfoList.length; i++) {
         let usedToolBox: HTMLDivElement = document.createElement("div");
         usedToolBox.classList.add("DescriptionTextbox", "Tool");
@@ -34,11 +62,7 @@ function OnStart() {
         let fullPath: string = "./Logos/" + toolInfo.filePath;
         let toolBoxIcon: HTMLImageElement = document.createElement("img");
         toolBoxIcon.width = 0;
-        toolBoxIcon.onload = () => {
-            let aspectRatio: number = toolBoxIcon.naturalWidth / toolBoxIcon.naturalHeight;
-            toolBoxIcon.width = usedToolBox.clientHeight * aspectRatio;
-            toolBoxIcon.height = usedToolBox.clientHeight;
-        };
+        toolBoxIcon.onload = () => { SetToolBoxIconSize(toolBoxIcon, usedToolBox); };
         
         toolBoxIcon.src = fullPath;
         toolBoxIcon.style.transform = `scale(${toolBoxIconScale})`;
@@ -48,7 +72,85 @@ function OnStart() {
         usedToolBoxDescription.textContent = toolInfo.toolName;
         usedToolBox.appendChild(usedToolBoxDescription);
     }
+}
+
+function CreateToolInfoFilterBoxes() {
+    for (let toolType of Object.values(ToolType)) {
+        let isToolTypeValue: boolean = !isNaN(Number(toolType));
+        if (!isToolTypeValue) continue;
+
+        toolType = toolType as ToolType;
+        let filterResults: number[] = GetToolBoxFilterResults(toolType);
+        let doesFilterHaveTool: boolean = filterResults.length > 0;
+        if (!doesFilterHaveTool) continue;
+
+        let filterButton: HTMLButtonElement = document.createElement("button");
+        filterButton.classList.add("DescriptionTextbox", "ToolButton");
+        let filterNameStr: string = toolTypeFilterNameMap.get(toolType)!;
+        filterNameStr += " (" + filterResults.length.toString() + ")";
+        filterButton.textContent = filterNameStr;
+        filterButton.addEventListener("click", () => { selectedToolTypeFilter = toolType; HandleToolBoxesVisibility(); });
+        toolBoxFilterButtons.set(toolType, filterButton);
+        toolBoxFiltersRoot.appendChild(filterButton);
+    }
+}
+
+let toolBoxFilterButtons = new Map<ToolType, HTMLButtonElement>();
+
+function GetToolBoxFilterResults(toolType: ToolType): number[] {
+    let filterResults: number[] = [];
+    for (let i: number = 0; i < toolInfoList.length; i++) {
+        if (toolType === ToolType.All) { filterResults.push(i); continue; }
+        let toolInfo: ToolInfo = toolInfoList[i];
+        if (toolType === ToolType.Other && toolInfo.toolTypeList.length === 0) { filterResults.push(i); continue; }
+        if (toolInfo.toolTypeList.includes(toolType)) filterResults.push(i);
+    }
+    return filterResults;
+}
+
+function SetToolBoxIconSize(toolBoxIcon: HTMLImageElement, usedToolBox: HTMLDivElement) {
+    let aspectRatio: number = toolBoxIcon.naturalWidth / toolBoxIcon.naturalHeight;
+    toolBoxIcon.width = usedToolBox.clientHeight * aspectRatio;
+    toolBoxIcon.height = usedToolBox.clientHeight;
+}
+
+function OnStart() {
+    CreateToolInfoBoxes();
+    CreateToolInfoFilterBoxes();
+    toolsCollapseButton.addEventListener("click", () => { areToolsCollapsed = !areToolsCollapsed; });
+    toolBoxFilterButtons.set(ToolType.ShowMore, toolsCollapseButton);
     OnDraw();
+}
+
+const minimumCollapsedToolsCount: number = 3;
+
+function HandleToolBoxesVisibility() {
+    let toolsColumnCount: number = GetToolsColumnCount();
+    let collapsedToolBoxCount: number = Math.max(toolsColumnCount * collapsedRowCount, minimumCollapsedToolsCount);
+    let visibleToolBoxCount: number = areToolsCollapsed ? collapsedToolBoxCount : toolInfoList.length;
+    let collapseButtonText: string = areToolsCollapsed ? "UKAŽ VÍCE" : "UKAŽ MÉNĚ";
+    toolsCollapseButton.textContent = collapseButtonText;
+    let toolBoxFilterResults = GetToolBoxFilterResults(selectedToolTypeFilter);
+
+    let possibleVisibleToolsCount: number = 0;
+    let visibleToolsCount: number = 0;
+    for (let i = 0; i < toolInfoList.length; i++) {
+        let toolBox: HTMLDivElement = toolsSectionRoot.children[i] as HTMLDivElement;
+        let isToolBoxVisible: boolean = visibleToolsCount < visibleToolBoxCount;
+        let isPossiblyVisible = toolBoxFilterResults.includes(i);
+        if (!isPossiblyVisible) isToolBoxVisible = false;
+        let toolBoxDisplayStr: string = isToolBoxVisible ? "flex" : "none";
+        toolBox.style.display = toolBoxDisplayStr;
+
+        let toolBoxIcon: HTMLImageElement = toolBox.children[0] as HTMLImageElement;
+        if (isPossiblyVisible) possibleVisibleToolsCount++;
+        if (isToolBoxVisible) visibleToolsCount++;
+        SetToolBoxIconSize(toolBoxIcon, toolBox);
+    }
+    
+    let isCollapseButtonVisible: boolean = possibleVisibleToolsCount > collapsedToolBoxCount;
+    let collapseButtonDisplayStr: string = isCollapseButtonVisible ? "flex" : "none";
+    toolsCollapseButtonContainer.style.display = collapseButtonDisplayStr;
 }
 
 let previousTimeSinceStarted: number = Utils.GetTimeSinceStarted();
@@ -60,9 +162,12 @@ function OnDraw() {
     let headerRect: DOMRect = toolsHeader.getBoundingClientRect();
     if (headerRect.width != previousHeaderWidth) OnHeaderChanged();
     previousHeaderWidth = headerRect.width;
+
     HandleToolsPositions();
     HandleToolsBoxInteractions();
+    HandleToolBoxesVisibility();
     HandleToolsBoxAnimations(deltaTime);
+    HandleToolsButtonsAnimations(deltaTime);
 
     requestAnimationFrame(OnDraw);
     previousTimeSinceStarted = timeSinceStarted;
@@ -97,6 +202,7 @@ const toolsMoveSpeed: number = 60;
 const toolsImagesScale: number = 0.85;
 const distanceToMaximumEdgeOpacity: number = 115;
 const distanceToMaximumCenterOpacity: number = 80;
+const headerLineHeight: number = 64;
 
 function HandleToolsPositions() {
     let timeSinceStarted = Utils.GetTimeSinceStarted();
@@ -111,9 +217,13 @@ function HandleToolsPositions() {
 
     let animationOpacity: number = Utils.Clamp(Utils.InverseLerp(scrollingToolsOpacityDelay, scrollingToolsOpacityAnimationDuration, timeSinceStarted), 0, 1);
     toolsHeader.style.opacity = animationOpacity.toString();
+    let headerStyle: CSSStyleDeclaration = getComputedStyle(toolsHeader);
+    let headerLines: number = toolsHeader.clientHeight / headerLineHeight;
 
     for (let i: number = 0; i < scrollingToolsCount; i++) {
         let imageElement = scrollingTools.children[i] as HTMLImageElement;
+        if (headerLines > 1) { imageElement.style.display = "none"; continue; }
+
         let imagePosX: number = imageSizeWithGap * i;
         imagePosX += timeSinceStarted * toolsMoveSpeed;
         imagePosX %= toolsHeader.clientWidth;
@@ -127,7 +237,7 @@ function HandleToolsPositions() {
         let imageEdgeOpacity: number = Utils.Clamp(distToEdge / distanceToMaximumEdgeOpacity, 0, 1);
         let imageCenterOpacity: number = Utils.Clamp(Utils.InverseLerp(headerContentWidth / 2, headerContentWidth / 2 + distanceToMaximumCenterOpacity, imageXToCenterDist), 0, 1);
         let imageOpacity: number = Math.min(imageEdgeOpacity, imageCenterOpacity, animationOpacity);
-        imageElement.style.display = imageEdgeOpacity === 0 ? "none" : "inline";
+        imageElement.style.display = imageOpacity === 0 ? "none" : "inline";
         imageElement.style.opacity = imageOpacity.toString();
     }
 }
@@ -137,25 +247,39 @@ let hoverAnimationTimerMap = new Map<number, number>();
 let hoverAnimationStatusMap = new Map<number, boolean>();
 let toolBoxYOffsetMap = new Map<number, number>();
 
-const toolBoxOpacityBaseDelay: number = 1.8;
+const toolBoxOpacityBaseDelay: number = 2.35;
 const toolBoxOpacityRowDelay: number = 0.4;
 const toolBocOpacityAnimationDuration: number = 0.7;
+
+function GetToolsColumnCount(): number {
+    let rootDocumentStyle: CSSStyleDeclaration = getComputedStyle(document.documentElement);
+    let toolsMaxColumnCount: number = parseInt(rootDocumentStyle.getPropertyValue("--max-tool-section-columns"));
+
+    let toolsSectionWidth: number = Utils.GetNumericPixels(getComputedStyle(toolsSectionRoot).width);
+    let toolBoxWidth: number = Utils.GetNumericPixels(rootDocumentStyle.getPropertyValue("--tool-box-width"));
+    if (toolsSectionRoot.children.length > 0) {
+        let toolBox: HTMLDivElement = toolsSectionRoot.children[0] as HTMLDivElement;
+        let toolBoxRect: DOMRect = toolBox.getBoundingClientRect();
+        toolBoxWidth = toolBoxRect.width;
+    }
+
+    let toolBoxGap: number = Utils.GetNumericPixels(rootDocumentStyle.getPropertyValue("--tool-gap"));
+    let fitColumnsCount: number = Math.floor(toolsSectionWidth / (toolBoxWidth + toolBoxGap));
+    let actualColumnsCount: number = Utils.Clamp(fitColumnsCount, 1, toolsMaxColumnCount);
+
+    return actualColumnsCount;
+}
 
 function HandleToolsBoxInteractions() {
     let toolsBoxCount: number = toolsSectionRoot.children.length;
     let currentHoveredBoxIndices = new Set<number>();
-    let rootDocumentStyle: CSSStyleDeclaration = getComputedStyle(document.documentElement);
-    let toolsColumnCount: number = parseInt(rootDocumentStyle.getPropertyValue("--tool-section-columns"));
+    let toolsColumnCount: number = GetToolsColumnCount();
     let timeSinceStarted: number = Utils.GetTimeSinceStarted();
 
     for (let i: number = 0; i < toolsBoxCount; i++) {
         let toolBox: HTMLDivElement = toolsSectionRoot.children[i] as HTMLDivElement;
         let toolBoxYOffset: number = toolBoxYOffsetMap.has(i) ? toolBoxYOffsetMap.get(i)! : 0;
-        let toolBoxRect: DOMRect = toolBox.getBoundingClientRect();
-        toolBoxRect.height -= toolBoxYOffset;
-
-        let mouseBoxOriginDiff: Utils.Vec2 = Utils.GetMousePos().Minus(toolBoxRect.left, toolBoxRect.top);
-        let isInToolBox: boolean = mouseBoxOriginDiff.IsInsideOf(0, 0, toolBoxRect.width, toolBoxRect.height);
+        let isInToolBox: boolean = Utils.IsMouseInBox(toolBox, new Utils.Vec2(0, -toolBoxYOffset));
         if (isInToolBox) currentHoveredBoxIndices.add(i);
 
         let toolRowNumber: number = Math.floor(i / toolsColumnCount);
@@ -195,6 +319,23 @@ function HandleToolsBoxAnimations(deltaTime: number) {
         toolBoxYOffsetMap.set(toolBoxIndex, toolBoxAnimationY);
         let toolBoxDiv: HTMLDivElement = toolsSectionRoot.children[toolBoxIndex] as HTMLDivElement;
         toolBoxDiv.style.transform = `translateY(${toolBoxAnimationY}px)`;
+    }
+}
+
+const filterButtonsOpacityAnimationDelay: number = 2;
+const filterButtonsOpacityAnimationDuration: number = 1.1;
+
+function HandleToolsButtonsAnimations(deltaTime: number) {
+    let timeSinceStarted = Utils.GetTimeSinceStarted();
+    let buttonOpacity: number = Utils.Clamp(Utils.InverseLerp(
+        filterButtonsOpacityAnimationDelay, filterButtonsOpacityAnimationDuration, timeSinceStarted), 0, 1);
+
+    for (let toolType of toolBoxFilterButtons.keys()) {
+        let filterButton: HTMLButtonElement = toolBoxFilterButtons.get(toolType)!;
+        filterButton.style.opacity = buttonOpacity.toString();
+        let isFilterSelected: boolean = selectedToolTypeFilter === toolType;
+        let backgroundColor = isFilterSelected ? "#293E7C" : "black";
+        filterButton.style.backgroundColor = backgroundColor;
     }
 }
 

@@ -10,6 +10,7 @@ const headerDiagonalsColor: string = "#ab6339";
 
 function OnDraw() {
     ProgressDiagonals(tilingDiagonalsDiv, headerDiagonalsColor);
+    HandleIntroductoryTextResizing();
     requestAnimationFrame(OnDraw);
 }
 
@@ -29,6 +30,16 @@ function ProgressDiagonals(tilingDiagonals: HTMLDivElement, color: string) {
 
 function SetProperty(element: HTMLElement, propertyName: string, propertyValue: string) {
     element.style.setProperty(propertyName, propertyValue);
+}
+
+const defaultSizeIntroductionWidth: number = 700;
+const minimumIntroductionSize: number = 0.35;
+
+function HandleIntroductoryTextResizing() {
+    let diagonalsBoundsRect: DOMRect = tilingDiagonalsDiv.getBoundingClientRect();
+    let intendedScreenWidth: number = diagonalsBoundsRect.width;
+    let introductionSize: number = Utils.Clamp(intendedScreenWidth / defaultSizeIntroductionWidth, minimumIntroductionSize, 1);
+    document.documentElement.style.setProperty("--introduction-text-size", introductionSize.toString());
 }
 
 OnDraw();

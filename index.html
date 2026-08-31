@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="TilingDiagonals.css">
     <link rel="stylesheet" href="Description.css">
     <link rel="stylesheet" href="Tools.css">
-    <link rel="icon" type="image/png" href="./favicon.png">
+    <link rel="icon" type="image/png" href="./Favicon.png">
     <title>Jan Kalbáč</title>
 </head>
 <body style="background-color:black; color:white">
@@ -25,30 +25,36 @@
             <div class="DiagonalsModulate"></div>
             <div class="Introduction" id="Introduction">
                 <span style="font-size: 2.5em">Ahoj, jmenuji se </span>
+                <br id="IntroductionBreak">
                 <span class="MyName"><b>JAN KALBÁČ</b>!</span>
             </div>
         </div>
-        <br>
         <div class="Description">
             <img src="MyPicture.png" class="MyImage" id="MyImage">
             <div class="DescriptionTextbox" id="DescriptionTextbox">
                 <div class="TextContainer" id="TextContainer">
                     Jsem ambiciózní český programátor, který se specializuje na herní vývoj a design, se zkušenostmi v jazycích C#, C++ a herním enginem Godot.
-                    <br><br>
-                    Mimo jiné se také zúčastňuji celostátních soutěžích, ve kterých buď pracuji za sebe, nebo jako člen většího týmu.
+                    <span class="OptionalElement">
+                        <br><br>
+                        Mimo jiné se také zúčastňuji celostátních soutěžích, ve kterých buď pracuji za sebe, nebo jako člen většího týmu.
+                    </span>
                     <br><br>
                     Zde ukazuji své projekty a úspěchy, které by vás mohli zaujat.
                 </div>
             </div>
         </div>
-        <br><br>
+        <br class="OptionalElement"><br>
         <div class="ToolsRoot">
             <div class="ScrollingTools" id="ScrollingTools"></div>
-            <h1 id="ToolsHeader">NÁSTROJE KTERÉ POUŽÍVÁM</h1>
+            <h1 id="ToolsHeader">JAKÉ NÁSTROJE POUŽÍVÁM?</h1>
             <br>
+            <div class="ToolButtonContainer Filter" id="ToolBoxFilters"></div>
+            <div class="ToolSectionButtonSeperator"></div>
             <div class="ToolsSection" id="ToolsSection"></div>
+            <div class="ToolButtonContainer" id="ToolButtonContainer">
+                <button class="DescriptionTextbox ToolButton" id="ToolsCollapseButton"></button>
+            </div>
         </div>
-        <br><br>
     </section>
     <section id="projects">
         <h1>PROJEKTY</h1>
