@@ -8,14 +8,21 @@ const descriptionAnimationDelay: number = 1.5
 const descriptionAnimationDuration: number = 0.925;
 
 function OnStart() {
-    OnDraw();
+    requestAnimationFrame(OnDraw);
 }
+
+let prevDescriptionSize: Utils.Vec2 = Utils.Vec2.Zero();
 
 function OnDraw() {
     let animationProgress: number = Utils.GetAnimationProgress(descriptionAnimationDelay, descriptionAnimationDuration);
     descriptionImage.style.opacity = animationProgress.toString();
     descriptionTextbox.style.opacity = animationProgress.toString();
-    FitText();
+
+    let textboxBounds: DOMRect = descriptionTextbox.getBoundingClientRect();
+    let currentDescriptionSize: Utils.Vec2 = new Utils.Vec2(textboxBounds.width, textboxBounds.height);
+    let descriptionSizeChanged: boolean = !prevDescriptionSize.Equals(currentDescriptionSize);
+    prevDescriptionSize = currentDescriptionSize;
+    if (descriptionSizeChanged) FitText();
     requestAnimationFrame(OnDraw);
 }
 

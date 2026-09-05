@@ -18,6 +18,9 @@ export class Vec2 {
     IsInsideOf(x, y, w, h) {
         return this.x >= x && this.y >= y && this.x <= w && this.y <= h;
     }
+    Equals(other) {
+        return this.x === other.x && this.y === other.y;
+    }
 }
 export function GetTimeSinceStarted() {
     return (performance.now() - startPerformance) / 1000.0;

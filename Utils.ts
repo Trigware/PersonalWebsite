@@ -23,6 +23,9 @@ export class Vec2 {
     public IsInsideOf(x: number, y: number, w: number, h: number): boolean {
         return this.x >= x && this.y >= y && this.x <= w && this.y <= h;
     }
+    public Equals(other: Vec2): boolean {
+        return this.x === other.x && this.y === other.y;
+    }
 }
 
 export function GetTimeSinceStarted(): number {

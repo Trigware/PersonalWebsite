@@ -5,13 +5,19 @@ const textContainer = document.getElementById("TextContainer");
 const descriptionAnimationDelay = 1.5;
 const descriptionAnimationDuration = 0.925;
 function OnStart() {
-    OnDraw();
+    requestAnimationFrame(OnDraw);
 }
+let prevDescriptionSize = Utils.Vec2.Zero();
 function OnDraw() {
     let animationProgress = Utils.GetAnimationProgress(descriptionAnimationDelay, descriptionAnimationDuration);
     descriptionImage.style.opacity = animationProgress.toString();
     descriptionTextbox.style.opacity = animationProgress.toString();
-    FitText();
+    let textboxBounds = descriptionTextbox.getBoundingClientRect();
+    let currentDescriptionSize = new Utils.Vec2(textboxBounds.width, textboxBounds.height);
+    let descriptionSizeChanged = !prevDescriptionSize.Equals(currentDescriptionSize);
+    prevDescriptionSize = currentDescriptionSize;
+    if (descriptionSizeChanged)
+        FitText();
     requestAnimationFrame(OnDraw);
 }
 const minimumFontSize = 0;

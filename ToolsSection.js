@@ -77,10 +77,15 @@ function CreateToolInfoFilterBoxes() {
         let filterNameStr = toolTypeFilterNameMap.get(toolType);
         filterNameStr += " (" + filterResults.length.toString() + ")";
         filterButton.textContent = filterNameStr;
-        filterButton.addEventListener("click", () => { selectedToolTypeFilter = toolType; HandleToolBoxesVisibility(); });
+        filterButton.addEventListener("click", () => { OnFilterClicked(toolType); });
         toolBoxFilterButtons.set(toolType, filterButton);
         toolBoxFiltersRoot.appendChild(filterButton);
     }
+}
+function OnFilterClicked(filterToolType) {
+    selectedToolTypeFilter = filterToolType;
+    areToolsCollapsed = true;
+    HandleToolBoxesVisibility();
 }
 let toolBoxFilterButtons = new Map();
 function GetToolBoxFilterResults(toolType) {
@@ -111,6 +116,7 @@ function OnStart() {
     toolsCollapseButton.addEventListener("click", () => { areToolsCollapsed = !areToolsCollapsed; });
     toolBoxFilterButtons.set(ToolType.ShowMore, toolsCollapseButton);
     OnDraw();
+    requestAnimationFrame(OnHeaderChanged);
 }
 const minimumCollapsedToolsCount = 3;
 function HandleToolBoxesVisibility() {
@@ -227,15 +233,19 @@ function GetToolsColumnCount() {
     let rootDocumentStyle = getComputedStyle(document.documentElement);
     let toolsMaxColumnCount = parseInt(rootDocumentStyle.getPropertyValue("--max-tool-section-columns"));
     let toolsSectionWidth = Utils.GetNumericPixels(getComputedStyle(toolsSectionRoot).width);
-    let toolBoxWidth = Utils.GetNumericPixels(rootDocumentStyle.getPropertyValue("--tool-box-width"));
-    if (toolsSectionRoot.children.length > 0) {
-        let toolBox = toolsSectionRoot.children[0];
+    let toolBoxWidth = 0;
+    for (let i = 0; i < toolsSectionRoot.children.length; i++) {
+        let toolBox = toolsSectionRoot.children[i];
+        let toolBoxStyle = getComputedStyle(toolBox);
+        let isToolBoxVisible = toolBoxStyle.display !== "none";
+        if (!isToolBoxVisible)
+            continue;
         let toolBoxRect = toolBox.getBoundingClientRect();
         toolBoxWidth = toolBoxRect.width;
     }
     let toolBoxGap = Utils.GetNumericPixels(rootDocumentStyle.getPropertyValue("--tool-gap"));
     let fitColumnsCount = Math.floor(toolsSectionWidth / (toolBoxWidth + toolBoxGap));
-    let actualColumnsCount = Utils.Clamp(fitColumnsCount, 1, toolsMaxColumnCount);
+    let actualColumnsCount = Math.min(fitColumnsCount, toolsMaxColumnCount);
     return actualColumnsCount;
 }
 function HandleToolsBoxInteractions() {

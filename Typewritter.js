@@ -21,13 +21,18 @@ function OnDraw() {
     HandleIntroductionPositioning();
     requestAnimationFrame(OnDraw);
 }
+let previousWindowSize = Utils.Vec2.Zero();
 function ProgressTypewritter() {
     let timeSinceAnimationStarted = Math.max(Utils.GetTimeSinceStarted() - animationDelay, 0);
     let drawnGlyphCount = Math.floor(timeSinceAnimationStarted / glyphShowDuration);
     let glyphsEncountered = 0;
+    let currentWindowSize = new Utils.Vec2(window.innerWidth, window.innerHeight);
+    let windowSizeChanged = !currentWindowSize.Equals(previousWindowSize);
+    previousWindowSize = currentWindowSize;
     let typewritterFinished = previousContent.length >= combinedContentLength;
     previousContent = "";
-    introductionFullWidth = maximumElementHeight = totalElementHeight = 0;
+    let introductionStoredWidth = 0;
+    maximumElementHeight = totalElementHeight = 0;
     for (let i = 0; i < originalContentList.length; i++) {
         let introductionChild = introductionDiv.children[i];
         let originalContent = originalContentList[i];
@@ -36,7 +41,7 @@ function ProgressTypewritter() {
         if (!typewritterFinished)
             introductionChild.textContent = originalContent;
         let introductionRect = introductionChild.getBoundingClientRect();
-        introductionFullWidth += introductionRect.width;
+        introductionStoredWidth += introductionRect.width;
         maximumElementHeight = Math.max(maximumElementHeight, introductionRect.height);
         totalElementHeight += introductionRect.height;
         if (!typewritterFinished)
@@ -44,6 +49,8 @@ function ProgressTypewritter() {
         glyphsEncountered += introductionChild.textContent.length;
         previousContent += newContent;
     }
+    if (windowSizeChanged || !typewritterFinished)
+        introductionFullWidth = introductionStoredWidth;
 }
 const introductionYPercentageOffset = 10;
 const introductionBreakRequirement = 1.35;

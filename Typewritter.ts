@@ -28,14 +28,20 @@ function OnDraw() {
     requestAnimationFrame(OnDraw);
 }
 
+let previousWindowSize: Utils.Vec2 = Utils.Vec2.Zero();
+
 function ProgressTypewritter() {
     let timeSinceAnimationStarted: number = Math.max(Utils.GetTimeSinceStarted() - animationDelay, 0);
     let drawnGlyphCount: number = Math.floor(timeSinceAnimationStarted / glyphShowDuration);
     let glyphsEncountered: number = 0;
+    let currentWindowSize: Utils.Vec2 = new Utils.Vec2(window.innerWidth, window.innerHeight);
+    let windowSizeChanged: boolean = !currentWindowSize.Equals(previousWindowSize);
+    previousWindowSize = currentWindowSize;
     
     let typewritterFinished: boolean = previousContent.length >= combinedContentLength;
     previousContent = "";
-    introductionFullWidth = maximumElementHeight = totalElementHeight = 0;
+    let introductionStoredWidth: number = 0;
+    maximumElementHeight = totalElementHeight = 0;
 
     for (let i: number = 0; i < originalContentList.length; i++) {
         let introductionChild: Element = introductionDiv.children[i];
@@ -45,7 +51,7 @@ function ProgressTypewritter() {
         
         if (!typewritterFinished) introductionChild.textContent = originalContent;
         let introductionRect: DOMRect = introductionChild.getBoundingClientRect();
-        introductionFullWidth += introductionRect.width;
+        introductionStoredWidth += introductionRect.width;
         maximumElementHeight = Math.max(maximumElementHeight, introductionRect.height);
         totalElementHeight += introductionRect.height;
         if (!typewritterFinished) introductionChild.textContent = newContent;
@@ -53,6 +59,8 @@ function ProgressTypewritter() {
         glyphsEncountered += introductionChild.textContent.length;
         previousContent += newContent;
     }
+
+    if (windowSizeChanged || !typewritterFinished) introductionFullWidth = introductionStoredWidth;
 }
 
 const introductionYPercentageOffset: number = 10;
